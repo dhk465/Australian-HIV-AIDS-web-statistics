@@ -10,6 +10,10 @@ import pandas as pd
 from plotly.offline import init_notebook_mode, iplot, plot
 import plotly.graph_objs as go
 
+app = dash.Dash(__name__)
+server = app.server
+server.secret_key = os.environ.get('SECRET_KEY', 'my-secret-key')
+
 # declaring a DataFrame from csv
 aasd = pd.read_csv('./Aids2.csv')
 # renaming the columns
@@ -187,10 +191,7 @@ def generate_table(dataframe, max_rows=100):
     )
 
 ################################HTML############################################
-app = dash.Dash(__name__)
 app.css.config.serve_locally=True
-server = app.server
-server.secret_key = os.environ.get('SECRET_KEY', 'my-secret-key')
 
 app.layout = html.Div(children=[
 # https://codepen.io/chriddyp/pen/bWLwgP.css as used on https://dash.plot.ly/getting-started

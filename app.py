@@ -10,10 +10,6 @@ import pandas as pd
 from plotly.offline import init_notebook_mode, iplot, plot
 import plotly.graph_objs as go
 
-app = dash.Dash(__name__)
-server = app.server
-server.secret_key = os.environ.get('SECRET_KEY', 'my-secret-key')
-
 # declaring a DataFrame from csv
 aasd = pd.read_csv('./Aids2.csv')
 # renaming the columns
@@ -191,6 +187,9 @@ def generate_table(dataframe, max_rows=100):
     )
 
 ################################HTML############################################
+app = dash.Dash(__name__)
+server = app.server
+server.secret_key = os.environ.get('SECRET_KEY', 'my-secret-key')
 app.css.config.serve_locally=True
 
 app.layout = html.Div(children=[
@@ -235,18 +234,21 @@ For further information, it is recommended to take a look at the [report](https:
             options=[{'label': 'Separate Men and Women', 'value': 'toggle_gender'}],
             values=''
         ),
-        dcc.Dropdown(
-            id='select_state',
-            options=[
-                {'label': 'Number of Patients in Australia', 'value': 'aus'},
-                {'label': 'Modes of Transmission in Australia', 'value': 'mode'},
-                {'label': 'Modes of Transmission in New South Wales', 'value': 'nsw'},
-                {'label': 'Modes of Transmission in Victoria', 'value': 'vic'},
-                {'label': 'Modes of Transmission in Queensland', 'value': 'qld'},
-                {'label': 'Modes of Transmission in other states', 'value': 'other'},
-            ],
-            value='aus'
-        ),
+        html.Div(
+            id='select_state_div', children=[
+            dcc.Dropdown(
+                id='select_state',
+                options=[
+                    {'label': 'Number of Patients in Australia', 'value': 'aus'},
+                    {'label': 'Modes of Transmission in Australia', 'value': 'mode'},
+                    {'label': 'Modes of Transmission in New South Wales', 'value': 'nsw'},
+                    {'label': 'Modes of Transmission in Victoria', 'value': 'vic'},
+                    {'label': 'Modes of Transmission in Queensland', 'value': 'qld'},
+                    {'label': 'Modes of Transmission in other states', 'value': 'other'},
+                ],
+                value='aus'
+            )
+        ]),
         dcc.Graph(id='inner_graph', style = {'height': '700'})
     ]),
     html.Div(id='raw_statistics', children=generate_table(aasd))
@@ -312,7 +314,7 @@ def update_checkbox(input_value):
         return {'display': 'none'}
 
 @app.callback(
-    Output(component_id='select_state', component_property='style'),
+    Output(component_id='select_state_div', component_property='style'),
     [Input(component_id='graph_type', component_property='value')]
 )
 def update_checkbox(input_value):

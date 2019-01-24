@@ -47,7 +47,7 @@ aasd['mode of transmission'] = aasd['mode of transmission'].map(deabbr_mode)
 aasd['days after diagnosis'] = aasd['date of death'].values - aasd['date of diagnosis'].values
 # rearranging the columns
 aasd = aasd[['state', 'sex', 'date of diagnosis', 'date of death', 'days after diagnosis', 'status', 'mode of transmission', 'age at diagnosis']]
-descriptive = aasd.describe(include='all').fillna('-').reset_index()
+descriptive = aasd.describe(include='all').fillna('-').round(2).reset_index()
 male_stat = aasd[aasd['sex'] == 'M']
 female_stat = aasd[aasd['sex'] == 'F']
 

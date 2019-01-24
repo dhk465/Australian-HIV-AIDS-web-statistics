@@ -1,3 +1,4 @@
+################################python############################################
 import os
 
 import dash
@@ -176,7 +177,7 @@ Choose the type of data you want to see below:
         )
     )
 ])
-
+################################app.callback############################################
 @app.callback(
     Output(component_id='graph_container', component_property='style'),
     [Input(component_id='type', component_property='value')]

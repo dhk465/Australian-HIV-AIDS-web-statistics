@@ -1,6 +1,7 @@
 import os
 
 import dash
+import dash_table
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
@@ -11,7 +12,7 @@ from plotly.offline import init_notebook_mode, iplot, plot
 import plotly.graph_objs as go
 
 # declaring a DataFrame from csv
-aasd = pd.read_csv('./Aids2.csv')
+aasd = pd.read_csv('https://vincentarelbundock.github.io/Rdatasets/csv/MASS/Aids2.csv')
 # renaming the columns
 aasd.rename({'diag': 'date of diagnosis',
              'death': 'date of death',
@@ -45,12 +46,7 @@ aasd['mode of transmission'] = aasd['mode of transmission'].map(deabbr_mode)
 aasd['days after diagnosis'] = aasd['date of death'].values - aasd['date of diagnosis'].values
 # rearranging the columns
 aasd = aasd[['state', 'sex', 'date of diagnosis', 'date of death', 'days after diagnosis', 'status', 'mode of transmission', 'age at diagnosis']]
-# the number of the deceased during the study
-aasd_alive = aasd[aasd['status'] == 'alive']
-num_dec = len(aasd) - len(aasd_alive)
-# the deceased participants at the end of the study are listed
-# apart from these participants, the date of death value 11504 indicates the participants are alive as of the end of the study
-last_day_dec = aasd[(aasd['date of death'] == 11504) & (aasd['status'] == 'deceased')]
+descriptive = aasd.describe(include='all').fillna('-').reset_index()
 male_stat = aasd[aasd['sex'] == 'M']
 female_stat = aasd[aasd['sex'] == 'F']
 
@@ -65,77 +61,6 @@ layout01 = go.Layout(
     yaxis = {'title': 'Number of Patients'}
 )
 fig01 = dict(data = histo01, layout = layout01)
-
-# pie_states
-pie01 = go.Pie(
-    labels = aasd['state'].unique(),
-    values = aasd['state'].value_counts(),
-    opacity = 0.65
-)
-layout02 = go.Layout(
-    showlegend = True,
-    height = 700,
-    autosize = True,
-    title = 'Number of Patients in Australian States'
-)
-fig02 = dict(data = [pie01], layout = layout02)
-
-pie02 = go.Pie(
-    labels = aasd['mode of transmission'].unique(),
-    values = aasd['mode of transmission'].value_counts()
-)
-pie03 = go.Pie(
-    labels = aasd[aasd['state'] == 'New South Wales']['mode of transmission'].unique(),
-    values = aasd[aasd['state'] == 'New South Wales']['mode of transmission'].value_counts()
-)
-pie04 = go.Pie(
-    labels = aasd[aasd['state'] == 'Victoria']['mode of transmission'].unique(),
-    values = aasd[aasd['state'] == 'Victoria']['mode of transmission'].value_counts()
-)
-pie05 = go.Pie(
-    labels = aasd[aasd['state'] == 'Queensland']['mode of transmission'].unique(),
-    values = aasd[aasd['state'] == 'Queensland']['mode of transmission'].value_counts()
-)
-pie06 = go.Pie(
-    labels = aasd[aasd['state'] == 'Others']['mode of transmission'].unique(),
-    values = aasd[aasd['state'] == 'Others']['mode of transmission'].value_counts()
-)
-
-layout05 = go.Layout(
-    showlegend = True,
-    height = 700,
-    autosize = True,
-    title = 'Modes of Transmission in Australia'
-)
-layout06 = go.Layout(
-    showlegend = True,
-    height = 700,
-    autosize = True,
-    title = 'Modes of Transmission in New South Wales'
-)
-layout07 = go.Layout(
-    showlegend = True,
-    height = 700,
-    autosize = True,
-    title = 'Modes of Transmission Victoria'
-)
-layout08 = go.Layout(
-    showlegend = True,
-    height = 700,
-    autosize = True,
-    title = 'Modes of Transmission in Queensland'
-)
-layout09 = go.Layout(
-    showlegend = True,
-    height = 700,
-    autosize = True,
-    title = 'Modes of Transmission in other states'
-)
-fig05 = dict(data = [pie02], layout = layout05)
-fig06 = dict(data = [pie03], layout = layout06)
-fig07 = dict(data = [pie04], layout = layout07)
-fig08 = dict(data = [pie05], layout = layout08)
-fig09 = dict(data = [pie06], layout = layout09)
 
 # scatter_days
 scatter01 = go.Scatter(
@@ -156,12 +81,12 @@ fig03 = dict(data = [scatter01], layout = layout03)
 # gender_histo
 male_histo = go.Histogram(
     x = male_stat['age at diagnosis'],
-    opacity = 0.75,
+    opacity = 0.55,
     name = 'men'
 )
 female_histo = go.Histogram(
     x = female_stat['age at diagnosis'],
-    opacity = 0.75,
+    opacity = 0.95,
     name = 'women'
 )
 layout04 = go.Layout(
@@ -175,17 +100,6 @@ layout04 = go.Layout(
 )
 fig04 = dict(data = [male_histo, female_histo], layout = layout04)
 
-# this function will generate an html table using a dataframe
-def generate_table(dataframe, max_rows=100):
-    return html.Table(
-        # Header
-        [html.Tr([html.Th(col) for col in dataframe.columns])] +
-        # Body
-        [html.Tr([
-            html.Td(dataframe.iloc[i][col]) for col in dataframe.columns
-        ]) for i in range(min(len(dataframe), max_rows))]
-    )
-
 ################################HTML############################################
 app = dash.Dash(__name__)
 server = app.server
@@ -195,7 +109,7 @@ app.css.config.serve_locally=True
 app.layout = html.Div(children=[
 # https://codepen.io/chriddyp/pen/bWLwgP.css as used on https://dash.plot.ly/getting-started
     html.Link(
-        href='bWLwgP.css',
+        href='https://codepen.io/chriddyp/pen/bWLwgP.css',
         rel='stylesheet'
     ),
     html.H1(
@@ -211,12 +125,14 @@ The research was carried out by *P. J. Solomon* in order to **emphasise the impo
 healthcare** and to give **an insight on the epidemic**.
 
 For further information, it is recommended to take a look at the [report](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=8&cad=rja&uact=8&ved=2ahUKEwicwff0pujfAhVHJ1AKHbEYBJ0QFjAHegQIBxAC&url=https%3A%2F%2Fpdfs.semanticscholar.org%2F7d23%2F36da875505e66ae983a271ee6cd83ce42677.pdf&usg=AOvVaw2j7D0Cij-lVA6_Mzr8brci) on the statistics.
+
+Choose the type of data you want to see below:
     '''),
     dcc.RadioItems(
     id='type',
     options=[
-        {'label': 'Raw Data', 'value': 'data'},
-        {'label': 'Graphs', 'value': 'graph'}
+        {'label': 'Descriptive Statistics on Data', 'value': 'data'},
+        {'label': 'Graphs: Histogram/Pie/Scatter', 'value': 'graph'}
     ],
     value='data'
     ),
@@ -239,19 +155,24 @@ For further information, it is recommended to take a look at the [report](https:
             dcc.Dropdown(
                 id='select_state',
                 options=[
-                    {'label': 'Number of Patients in Australia', 'value': 'aus'},
-                    {'label': 'Modes of Transmission in Australia', 'value': 'mode'},
+                    {'label': 'Number of Patients in Australia', 'value': 'num'},
+                    {'label': 'Modes of Transmission in Australia', 'value': 'aus'},
                     {'label': 'Modes of Transmission in New South Wales', 'value': 'nsw'},
                     {'label': 'Modes of Transmission in Victoria', 'value': 'vic'},
                     {'label': 'Modes of Transmission in Queensland', 'value': 'qld'},
                     {'label': 'Modes of Transmission in other states', 'value': 'other'},
                 ],
-                value='aus'
+                value='num'
             )
         ]),
         dcc.Graph(id='inner_graph', style = {'height': '700'})
     ]),
-    html.Div(id='raw_statistics', children=generate_table(aasd))
+    html.Div(id='raw_statistics', children=
+        dash_table.DataTable(
+            columns=[{"name": i, "id": i} for i in descriptive.columns],
+            data=descriptive.to_dict("rows")
+        )
+    )
 ])
 
 @app.callback(
@@ -281,24 +202,50 @@ def update_container_data(input_value):
     Input(component_id='select_state', component_property='value')]
 )
 def update_pie_chart(input_value, box_toggled, state):
+    list_states = ['Australia'] + list(aasd['state'].unique())
+    abbr_states = ['aus', 'nsw', 'other', 'qld', 'vic']
+    aus_states = dict(zip(abbr_states, list_states))
+    if state == 'aus':
+        pie = go.Pie(
+            labels = aasd['mode of transmission'].unique(),
+            values = aasd['mode of transmission'].value_counts()
+        )
+    elif state == 'num':
+        pie = go.Pie(
+            labels = aasd['state'].unique(),
+            values = aasd['state'].value_counts(),
+            opacity = 0.65
+        )
+    else:
+        pie = go.Pie(
+            labels = aasd[aasd['state'] == aus_states[state]]['mode of transmission'].unique(),
+            values = aasd[aasd['state'] == aus_states[state]]['mode of transmission'].value_counts()
+        )
+    for abbr, area in aus_states.items():
+        if state == abbr:
+            titler = 'Modes of Transmission in ' + area
+    if state == 'num':
+        layout = go.Layout(
+            showlegend = True,
+            height = 700,
+            autosize = True,
+            title = 'Number of Patients in Australian states'
+        )
+    else:
+        layout = go.Layout(
+            showlegend = True,
+            height = 700,
+            autosize = True,
+            title = titler
+        )
+    fig02 = dict(data = [pie], layout = layout)
     if input_value == 'age_diagnosis':
         if box_toggled == ['toggle_gender']:
             figure = fig04
         else:
             figure = fig01
     elif input_value == 'num_states':
-        if state == 'mode':
-            figure = fig05
-        elif state == 'nsw':
-            figure = fig06
-        elif state == 'vic':
-            figure = fig07
-        elif state == 'qld':
-            figure = fig08
-        elif state == 'other':
-            figure = fig09
-        else:
-            figure = fig02
+        figure = fig02
     elif input_value == 'days_lived':
         figure = fig03
     return figure

@@ -9,6 +9,7 @@ dash-table==3.1.11
 dash-core-components==0.22.1
 dash-html-components==0.10.1
 dash-renderer==0.12.1
+dash-table==3.1.11
 decorator==4.3.0
 entrypoints==0.2.3
 Flask==1.0.2
@@ -32,7 +33,7 @@ MarkupSafe==1.0
 mistune==0.8.3
 nbconvert==5.3.1
 nbformat==4.4.0
-notebook==5.5.0
+notebook==5.7.2
 numpy==1.15.2
 pandas==0.23.4
 pandocfilters==1.4.2
@@ -46,7 +47,7 @@ Pygments==2.2.0
 python-dateutil==2.7.3
 pytz==2018.4
 qtconsole==4.3.1
-requests==2.18.4
+requests==2.20.0
 Send2Trash==1.5.0
 simplegeneric==0.8.1
 six==1.11.0
@@ -54,7 +55,7 @@ terminado==0.8.1
 testpath==0.3.1
 tornado==5.0.2
 traitlets==4.3.2
-urllib3==1.22
+urllib3==1.23
 wcwidth==0.1.7
 webencodings==0.5.1
 Werkzeug==0.14.1

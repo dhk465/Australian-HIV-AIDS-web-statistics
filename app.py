@@ -127,7 +127,7 @@ healthcare** and to give **an insight on the epidemic**.
 
 For further information, it is recommended to take a look at the [report](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=8&cad=rja&uact=8&ved=2ahUKEwicwff0pujfAhVHJ1AKHbEYBJ0QFjAHegQIBxAC&url=https%3A%2F%2Fpdfs.semanticscholar.org%2F7d23%2F36da875505e66ae983a271ee6cd83ce42677.pdf&usg=AOvVaw2j7D0Cij-lVA6_Mzr8brci) on the statistics.
 
-This project is created as an end-of-the-semester project by [*Daehee Kim*](https://github.com/dhk465/heroku-dash) (Prague College).
+This project was created as an end-of-the-semester project by [*Daehee Kim*](https://github.com/dhk465/heroku-dash) (Prague College).
 
 Choose the type of data you want to see below:
     '''),

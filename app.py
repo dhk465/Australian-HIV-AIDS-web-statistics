@@ -129,7 +129,7 @@ For further information, it is recommended to take a look at the [report](https:
 
 This project was created as an end-of-the-semester project by [*Daehee Kim*](https://github.com/dhk465/heroku-dash) (Prague College).
 
-Choose the type of data you want to see below:
+Choose a type of data you want to see below:
     '''),
     dcc.RadioItems(
     id='type',
